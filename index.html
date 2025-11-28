@@ -14,13 +14,12 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #2c3e50, #3498db);
             min-height: 100vh;
             padding: 20px;
         }
 
         .container {
-            max-width: 1600px;
+            
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
@@ -38,13 +37,13 @@
 
         .timeline-container {
             position: relative;
-            max-width: 1500px;
+
             margin: 0 auto;
             height: 850px;
             /*border: 2px solid #34495e;*/
             border-radius: 10px;
-            background: linear-gradient(to right, #ecf0f1, #bdc3c7);
-            overflow: hidden;
+            background: linear-gradient(to right, #ecf0f1, #ffffff);
+            overflow-x: scroll;
         }
 
         .timeline-axis {
@@ -53,7 +52,7 @@
             left: 0;
             right: 0;
             height: 2px;
-            background: #2c3e50;
+            
         }
 
         .year-marker {
@@ -77,11 +76,11 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            background: rgba(139, 69, 19, 0.25);
+            background: rgba(18, 155, 0, 0.1);
             pointer-events: none;
             z-index: 10;
-            border-left: 2px solid rgba(139, 69, 19, 0.5);
-            border-right: 2px solid rgba(139, 69, 19, 0.5);
+            border-left: 2px solid rgba(0, 0, 0, 0.2);
+            border-right: 2px solid rgba(0, 0, 0, 0.2);
         }
 
         .year-line {
@@ -116,7 +115,7 @@
             width: 2px;
             background: rgba(0, 0, 0, 0.3);
             transform: translateX(-50%);
-            z-index: 1;
+            z-index: 0;
         }
 
         .event-label {
@@ -174,6 +173,7 @@
             position: relative;
             opacity: 0.8;
             transition: all 0.3s ease;
+            z-index: 0;
         }
 
         .period:hover .period-bar {
@@ -195,7 +195,7 @@
             top: -35px;
             opacity: 0;
             transition: opacity 0.3s ease;
-            z-index: 4;
+            z-index: 500;
             pointer-events: none;
         }
 
@@ -238,19 +238,35 @@
         }
 
         .protogotico {
-            background: #7d3c98;
+            background: #540e72;
         }
 
         .gotico-temprano {
-            background: #9b59b6;
+            background: #6e268a;
         }
 
         .gotico-clasico {
-            background: #bb8fce;
+            background: #6b3582;
         }
 
         .gotico-tardio {
-            background: #d7bde2;
+            background: #824d99;
+        }
+
+        .renacimiento-trecento {
+            background: #16a085;
+        }
+
+        .renacimiento-quattrocento {
+            background: #138d75;
+        }
+
+        .renacimiento-cinquecento {
+            background: #117a65;
+        }
+
+        .manierismo {
+            background: #0e6655;
         }
 
         .cruzada {
@@ -262,11 +278,11 @@
         }
 
         .jerusalem-romana {
-            background: #e64622;
+            background: #ff2f00;
         }
 
-        .jerusalem-romana .period-text{
-            text-align: center;
+        .jerusalem-romana .period-text {
+            text-align: right;
             right: 8px;
         }
 
@@ -274,12 +290,21 @@
             background: #3498db;
         }
 
+        .jerusalem-judio {
+            background: #1724d4;
+        }
+
         .jerusalem-musulman {
-            background: #e67e22;
+            background: #ff8c27;
+        }
+
+        .jerusalem-musulman .period-text {
+            color: black;
+            text-shadow: none;
         }
 
         .orden-militar {
-            background: #8b4513;
+            background: #129b00;
         }
 
         .tooltip {
@@ -307,7 +332,7 @@
             gap: 20px;
             margin-top: 30px;
             padding: 20px;
-            background: rgba(0, 0, 0, 0.05);
+            background: rgba(0, 0, 0, 0.01);
             border-radius: 10px;
         }
 
@@ -327,6 +352,11 @@
         }
 
         @media (max-width: 768px) {
+
+            .timeline-container {
+                overflow-x: auto;
+            }
+
             .container {
                 padding: 15px;
             }
@@ -335,9 +365,10 @@
                 font-size: 2em;
             }
 
+            /* Altura ajustada para dispositivos móviles 
             .timeline-container {
                 height: 650px;
-            }
+            }*/
 
             .legend {
                 flex-direction: column;
@@ -349,7 +380,7 @@
 
 <body>
     <div class="container">
-        <h1>Línea de Tiempo (0 - 1500 d.C.)</h1>
+        <h1>Línea de Tiempo <br> (0 - 1500 d.C.)</h1>
 
         <div class="timeline-container" id="timeline">
             <!-- Los eventos se generarán aquí con JavaScript -->
@@ -364,33 +395,19 @@
                 <!-- Románico -->
                 <div class="legend-item">
                     <div class="legend-color romanico-temprano"></div>
-                    <span>Románico Temprano</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color romanico-pleno"></div>
-                    <span>Románico Pleno</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color romanico-tardio"></div>
-                    <span>Románico Tardío</span>
+                    <span>Románico</span>
                 </div>
 
                 <!-- Gótico -->
                 <div class="legend-item">
-                    <div class="legend-color protogotico"></div>
-                    <span>Protogótico</span>
-                </div>
-                <div class="legend-item">
                     <div class="legend-color gotico-temprano"></div>
-                    <span>Gótico Temprano</span>
+                    <span>Gótico</span>
                 </div>
+
+                <!-- Renacimiento -->
                 <div class="legend-item">
-                    <div class="legend-color gotico-clasico"></div>
-                    <span>Gótico Clásico</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color gotico-tardio"></div>
-                    <span>Gótico Tardío</span>
+                    <div class="legend-color renacimiento-quattrocento"></div>
+                    <span>Renacimiento</span>
                 </div>
 
                 <!-- Otros -->
@@ -415,6 +432,10 @@
                     <span>Jerusalén Musulmana</span>
                 </div>
                 <div class="legend-item">
+                    <div class="legend-color jerusalem-judio"></div>
+                    <span>Jerusalén Judía</span>
+                </div>
+                <div class="legend-item">
                     <div class="legend-color orden-militar"></div>
                     <span>Órdenes Militares</span>
                 </div>
@@ -433,7 +454,7 @@
                 añoInicio: 711,
                 añoFin: 1492,
                 descripcion: "",
-                tipo: "jerusalem-romana",
+                tipo: "jerusalem-musulman",
                 nivel: 11
             },
             // Etapas del Románico
@@ -449,14 +470,14 @@
                 nombre: "Románico Pleno",
                 añoInicio: 1050,
                 añoFin: 1100,
-                descripcion: "Apogeo del románico con grandes construcciones monásticas como Cluny",
+                descripcion: "Apogeo del románico con grandes construcciones monásticas como Cluny y expansión por el Camino de Santiago",
                 tipo: "romanico-pleno",
                 nivel: 1
             },
             {
                 nombre: "Románico Tardío",
                 añoInicio: 1100,
-                añoFin: 1150,
+                añoFin: 1200,
                 descripcion: "Última fase del románico, transición hacia el gótico, expansión por Europa Occidental",
                 tipo: "romanico-tardio",
                 nivel: 1
@@ -480,7 +501,7 @@
                 nivel: 2
             },
             {
-                nombre: "Gótico Clásico",
+                nombre: "Gótico Clásico / Radiante",
                 añoInicio: 1250,
                 añoFin: 1350,
                 descripcion: "Gótico radiante, máximo refinamiento técnico y decorativo",
@@ -494,6 +515,40 @@
                 descripcion: "Gótico flamígero e internacional, decoración exuberante(Flamígero en Francia, Perpendicular en Inglaterra, Isabelino en España)",
                 tipo: "gotico-tardio",
                 nivel: 2
+            },
+
+            // Etapas del Renacimiento
+            {
+                nombre: "Trecento (Prerrenacimiento)",
+                añoInicio: 1300,
+                añoFin: 1400,
+                descripcion: "Transición entre gótico y renacimiento, influencia de Giotto y el humanismo incipiente",
+                tipo: "renacimiento-trecento",
+                nivel: 1
+            },
+            {
+                nombre: "Quattrocento",
+                añoInicio: 1400,
+                añoFin: 1500,
+                descripcion: "Renacimiento temprano con grandes avances en arte, ciencia y arquitectura",
+                tipo: "renacimiento-quattrocento",
+                nivel: 1
+            },
+            {
+                nombre: "Cinquecento (Alto Renacimiento)",
+                añoInicio: 1495,
+                añoFin: 1520,
+                descripcion: "Apogeo del renacimiento con artistas como Leonardo da Vinci, Miguel Ángel y Rafael",
+                tipo: "renacimiento-cinquecento",
+                nivel: 1
+            },
+            {
+                nombre: "Manierismo",
+                añoInicio: 1520,
+                añoFin: 1600,
+                descripcion: "Estilo artístico que surge como reacción al Alto Renacimiento, caracterizado por la exageración y la complejidad",
+                tipo: "manierismo",
+                nivel: 1
             },
 
             // Control de Jerusalén
@@ -553,6 +608,30 @@
                 tipo: "jerusalem-musulman",
                 nivel: 4
             },
+            {
+                nombre: "Jerusalén bajo el Mandato Británico",
+                añoInicio: 1917,
+                añoFin: 1948,
+                descripcion: "Período de administración británica en Jerusalén tras la Primera Guerra Mundial",
+                tipo: "jerusalem-cristiano",
+                nivel: 3
+            },
+            {
+                nombre: "Jerusalén dividida",
+                añoInicio: 1948,
+                añoFin: 1967,
+                descripcion: "División de Jerusalén entre Jordania e Israel",
+                tipo: "jerusalem-cristiano",
+                nivel: 3
+            },
+            {
+                nombre: "Jerusalén bajo control israelí",
+                añoInicio: 1967,
+                añoFin: 2025,
+                descripcion: "Control israelí sobre toda Jerusalén tras la Guerra de los Seis Días",
+                tipo: "jerusalem-judio",
+                nivel: 4
+            },
 
             // Órdenes Militares
             {
@@ -608,7 +687,7 @@
         // Eventos puntuales (hitos)
         const eventos = [
             // Eventos específicos de Jerusalén
-            //{ año: 70, nombre: "Destrucción del Templo", descripcion: "Los romanos destruyen el Segundo Templo de Jerusalén", tipo: "jerusalem-cristiano" },
+            { año: 70, nombre: "Destrucción del Templo", descripcion: "Los romanos destruyen el Segundo Templo de Jerusalén", tipo: "jerusalem-cristiano" },
             //{ año: 132, nombre: "La rebelión de Bar Kojba.", descripcion: "El proyecto de reconstrucción de la ciudad por Adriano provocó la rebelión de Bar Kojba.", tipo: "jerusalem-romana" },
             { año: 330, nombre: "Iglesia del Santo Sepulcro", descripcion: "Constantino encarga la construcción de la Iglesia del Santo Sepulcro en Jerusalén (324-335 d.C.)", tipo: "jerusalem-cristiano" },
             { año: 476, nombre: "Caída del Imperio Romano de Occidente", descripcion: "El Imperio Romano de Occidente cae ante las invasiones bárbaras", tipo: "jerusalem-romana" },
@@ -632,7 +711,8 @@
             // { año: 1348, nombre: "Expansión de la Peste", descripcion: "La peste se extiende por toda Europa occidental, causando devastación masiva", tipo: "peste" },
             // { año: 1351, nombre: "Fin de la Primera Oleada", descripcion: "Termina la primera gran oleada de la Peste Negra, habiendo matado a un tercio de la población europea", tipo: "peste" }
             //{ año: 1492, nombre: "Caída del reino nazarí de Granada", descripcion: "Los musulmanes son expulsados de España despues de 780 años de presencia", tipo: "jerusalem-cristiano" },
-            { año: 1453, nombre: "Caída de Constantinopla", descripcion: "Los otomanos conquistan Constantinopla, marcando el fin del Imperio Bizantino", tipo: "jerusalem-musulman" }
+            { año: 1453, nombre: "Caída de Constantinopla", descripcion: "Los otomanos conquistan Constantinopla, marcando el fin del Imperio Bizantino", tipo: "jerusalem-musulman" },
+            { año: 1789, nombre: "Disolución de las Órdenes Militares", descripcion: "Muchas órdenes militares son disueltas durante las reformas de la época napoleónica y los cambios políticos en Europa", tipo: "orden-militar" },
         ];
 
         class LineaTiempo {
@@ -640,8 +720,8 @@
                 this.container = document.getElementById('timeline');
                 this.tooltip = document.getElementById('tooltip');
                 this.añoInicio = 0;
-                this.añoFin = 1500;
-                this.anchoMaximo = 1500;
+                this.añoFin = 2025;
+                this.anchoMaximo = 2025;
                 this.init();
             }
 
@@ -659,7 +739,7 @@
             }
 
             crearMarcadoresAño() {
-                const intervalos = [0, 250, 500, 750, 1000, 1250, 1500];
+                const intervalos = [0, 250, 500, 750, 1000, 1250, 1500, 1750, 2000];
 
                 intervalos.forEach((año, index) => {
                     const posicion = this.calcularPosicion(año);
