@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Línea de Tiempo Medieval (0-1500)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-container {
+            position: relative;
+            max-width: 1500px;
+            margin: 0 auto;
+            height: 850px;
+            /*border: 2px solid #34495e;*/
+            border-radius: 10px;
+            background: linear-gradient(to right, #ecf0f1, #bdc3c7);
+            overflow: hidden;
+        }
+
+        .timeline-axis {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #2c3e50;
+        }
+
+        .year-marker {
+            position: absolute;
+            bottom: 20px;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .year-marker.first {
+            transform: translateX(20%);
+        }
+
+        .year-marker.last {
+            transform: translateX(-120%);
+        }
+
+        .overlay-temple {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            background: rgba(139, 69, 19, 0.25);
+            pointer-events: none;
+            z-index: 10;
+            border-left: 2px solid rgba(139, 69, 19, 0.5);
+            border-right: 2px solid rgba(139, 69, 19, 0.5);
+        }
+
+        .year-line {
+            position: absolute;
+            bottom: 45px;
+            width: 1px;
+            height: 755px;
+            border-left: 1px dotted rgba(0, 0, 0, 0.2);
+            transform: translateX(-50%);
+        }
+
+        /* Eventos puntuales (hitos) */
+        .event {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .event-marker {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            transform: translateX(-50%);
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .event-line {
+            position: absolute;
+            width: 2px;
+            background: rgba(0, 0, 0, 0.3);
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+
+        .event-label {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 11px;
+            white-space: nowrap;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .event:hover .event-label {
+            opacity: 1;
+        }
+
+        .event-title {
+            position: absolute;
+            /* background: rgba(255, 255, 255, 0.95);*/
+            color: #2c3e50;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            white-space: nowrap;
+            transform: translateX(-50%);
+            z-index: 3;
+            pointer-events: none;
+            /* border: 1px solid rgba(0, 0, 0, 0.2); */
+            /*box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);*/
+        }
+
+        .event:hover .event-marker {
+            transform: translateX(-50%) scale(1.3);
+        }
+
+        /* Períodos (barras horizontales) */
+        .period {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .period-bar {
+            height: 30px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            position: relative;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .period:hover .period-bar {
+            opacity: 1;
+            transform: scaleY(1.2);
+        }
+
+        .period-label {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            left: 50%;
+            transform: translateX(-50%);
+            top: -35px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 4;
+            pointer-events: none;
+        }
+
+        .period:hover .period-label {
+            opacity: 1;
+        }
+
+        .period-text {
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            text-align: left;
+            font-size: 10px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            pointer-events: none;
+        }
+
+        /* Colores por tipo de evento */
+        .romanico {
+            background: #e74c3c;
+        }
+
+        .romanico-temprano {
+            background: #c0392b;
+        }
+
+        .romanico-pleno {
+            background: #e74c3c;
+        }
+
+        .romanico-tardio {
+            background: #ec7063;
+        }
+
+        .gotico {
+            background: #9b59b6;
+        }
+
+        .protogotico {
+            background: #7d3c98;
+        }
+
+        .gotico-temprano {
+            background: #9b59b6;
+        }
+
+        .gotico-clasico {
+            background: #bb8fce;
+        }
+
+        .gotico-tardio {
+            background: #d7bde2;
+        }
+
+        .cruzada {
+            background: #f39c12;
+        }
+
+        .peste {
+            background: #27ae60;
+        }
+
+        .jerusalem-romana {
+            background: #e64622;
+        }
+
+        .jerusalem-romana .period-text{
+            text-align: center;
+            right: 8px;
+        }
+
+        .jerusalem-cristiano {
+            background: #3498db;
+        }
+
+        .jerusalem-musulman {
+            background: #e67e22;
+        }
+
+        .orden-militar {
+            background: #8b4513;
+        }
+
+        .tooltip {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            max-width: 300px;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .timeline-container {
+                height: 650px;
+            }
+
+            .legend {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Línea de Tiempo (0 - 1500 d.C.)</h1>
+
+        <div class="timeline-container" id="timeline">
+            <!-- Los eventos se generarán aquí con JavaScript -->
+        </div>
+
+        <div class="legend">
+            <div style="margin-bottom: 15px; font-weight: bold; color: #2c3e50;">
+                <span style="margin-right: 20px;">📊 Períodos (Barras):</span>
+                <span>📍 Eventos Puntuales (Hitos):</span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
+                <!-- Románico -->
+                <div class="legend-item">
+                    <div class="legend-color romanico-temprano"></div>
+                    <span>Románico Temprano</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color romanico-pleno"></div>
+                    <span>Románico Pleno</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color romanico-tardio"></div>
+                    <span>Románico Tardío</span>
+                </div>
+
+                <!-- Gótico -->
+                <div class="legend-item">
+                    <div class="legend-color protogotico"></div>
+                    <span>Protogótico</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color gotico-temprano"></div>
+                    <span>Gótico Temprano</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color gotico-clasico"></div>
+                    <span>Gótico Clásico</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color gotico-tardio"></div>
+                    <span>Gótico Tardío</span>
+                </div>
+
+                <!-- Otros -->
+                <div class="legend-item">
+                    <div class="legend-color cruzada"></div>
+                    <span>Cruzadas</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color peste"></div>
+                    <span>Peste Negra</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color jerusalem-romana"></div>
+                    <span>Jerusalén Romana</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color jerusalem-cristiano"></div>
+                    <span>Jerusalén Cristiana</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color jerusalem-musulman"></div>
+                    <span>Jerusalén Musulmana</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color orden-militar"></div>
+                    <span>Órdenes Militares</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        // Períodos históricos (barras horizontales)
+        const periodos = [
+
+            {
+                nombre: "Ocupación musulmana de la Península Ibérica (781 años)",
+                añoInicio: 711,
+                añoFin: 1492,
+                descripcion: "",
+                tipo: "jerusalem-romana",
+                nivel: 11
+            },
+            // Etapas del Románico
+            {
+                nombre: "Románico Temprano",
+                añoInicio: 1000,
+                añoFin: 1050,
+                descripcion: "Primera fase del románico, influenciado por el arte carolingio y otoniano",
+                tipo: "romanico-temprano",
+                nivel: 1
+            },
+            {
+                nombre: "Románico Pleno",
+                añoInicio: 1050,
+                añoFin: 1100,
+                descripcion: "Apogeo del románico con grandes construcciones monásticas como Cluny",
+                tipo: "romanico-pleno",
+                nivel: 1
+            },
+            {
+                nombre: "Románico Tardío",
+                añoInicio: 1100,
+                añoFin: 1150,
+                descripcion: "Última fase del románico, transición hacia el gótico, expansión por Europa Occidental",
+                tipo: "romanico-tardio",
+                nivel: 1
+            },
+
+            // Etapas del Gótico
+            {
+                nombre: "Protogótico",
+                añoInicio: 1140,
+                añoFin: 1190,
+                descripcion: "Transición del románico al gótico, Saint-Denis y primeras catedrales",
+                tipo: "protogotico",
+                nivel: 2
+            },
+            {
+                nombre: "Gótico Temprano",
+                añoInicio: 1190,
+                añoFin: 1250,
+                descripcion: "Gótico clásico francés, catedrales de París, Chartres y Reims",
+                tipo: "gotico-temprano",
+                nivel: 2
+            },
+            {
+                nombre: "Gótico Clásico",
+                añoInicio: 1250,
+                añoFin: 1350,
+                descripcion: "Gótico radiante, máximo refinamiento técnico y decorativo",
+                tipo: "gotico-clasico",
+                nivel: 2
+            },
+            {
+                nombre: "Gótico Tardío",
+                añoInicio: 1350,
+                añoFin: 1500,
+                descripcion: "Gótico flamígero e internacional, decoración exuberante(Flamígero en Francia, Perpendicular en Inglaterra, Isabelino en España)",
+                tipo: "gotico-tardio",
+                nivel: 2
+            },
+
+            // Control de Jerusalén
+            {
+                nombre: "Jerusalén dominada por el Imperio Romano (409 años)",
+                añoInicio: -63,
+                añoFin: 324,
+                descripcion: "",
+                tipo: "jerusalem-romana",
+                nivel: 4
+            },
+            {
+                nombre: "Jerusalén dominada por el Imperio Bizantino (314 años)",
+                añoInicio: 324,
+                añoFin: 638,
+                descripcion: "",
+                tipo: "jerusalem-cristiano",
+                nivel: 3
+            },
+            {
+                nombre: "Jerusalén Musulmana (461 años)",
+                añoInicio: 638,
+                añoFin: 1099,
+                descripcion: "Dominio musulmán en Jerusalén desde la conquista árabe hasta las Cruzadas. Varios califatos gobernaron la región: el Califato Rashidun, luego el Califato Omeya, el Califato Abasí y por último el Califato Fatimí.",
+                tipo: "jerusalem-musulman",
+                nivel: 4
+            },
+            {
+                nombre: "Reino Cruzado de Jerusalén",
+                añoInicio: 1099,
+                añoFin: 1187,
+                descripcion: "Período de dominio cristiano en Jerusalén tras la Primera Cruzada",
+                tipo: "jerusalem-cristiano",
+                nivel: 3
+            },
+            {
+                nombre: "Reconquista Ayubí",
+                añoInicio: 1187,
+                añoFin: 1250,
+                descripcion: "Reconquista musulmana de Jerusalén por Saladino y dominio posterior",
+                tipo: "jerusalem-musulman",
+                nivel: 4
+            },
+            {
+                nombre: "Jerusalén dominada por los Mamelucos",
+                añoInicio: 1250,
+                añoFin: 1517,
+                descripcion: "Dominio mameluco en Jerusalén tras la caída de los Ayubíes",
+                tipo: "jerusalem-musulman",
+                nivel: 4
+            },
+            {
+                nombre: "Jerusalén bajo el Imperio Otomano",
+                añoInicio: 1517,
+                añoFin: 1917,
+                descripcion: "Dominio otomano en Jerusalén tras la conquista de los mamelucos",
+                tipo: "jerusalem-musulman",
+                nivel: 4
+            },
+
+            // Órdenes Militares
+            {
+                nombre: "Orden del Temple",
+                añoInicio: 1119,
+                añoFin: 1312,
+                descripcion: "Orden militar fundada para proteger a los peregrinos en Tierra Santa",
+                tipo: "orden-militar",
+                nivel: 5
+            },
+            {
+                nombre: "Orden de Montesa",
+                añoInicio: 1317,
+                añoFin: 1931,
+                descripcion: "Orden militar española creada tras la disolución de los Templarios",
+                tipo: "orden-militar",
+                nivel: 8
+            },
+            {
+                nombre: "Orden de Cristo",
+                añoInicio: 1319,
+                añoFin: 1789,
+                descripcion: "Orden militar portuguesa heredera de los Templarios",
+                tipo: "orden-militar",
+                nivel: 6
+            },
+            {
+                nombre: "Orden de los Caballeros Hospitalarios de San Juan de Jerusalén",
+                añoInicio: 1099,
+                añoFin: 1798,
+                descripcion: "Orden religiosa fundada para cuidar a los viajeros, peregrinos, pobres y enfermos.",
+                tipo: "orden-militar",
+                nivel: 7
+            },
+            {
+                nombre: "Orden Teutónica",
+                añoInicio: 1190,
+                añoFin: 1809,
+                descripcion: "orden medieval de carácter religioso-militar fundada en Palestina en 1190 en la Tercera Cruzada durante el asedio de la fortaleza de San Juan de Acre.",
+                tipo: "orden-militar",
+                nivel: 9
+            },
+            {
+                nombre: "Orden del Santo Sepulcro de Jerusalén",
+                añoInicio: 1098,
+                añoFin: 2025,
+                descripcion: "Orden religiosa y militar católica dedicada a la protección de los lugares santos en Jerusalén.",
+                tipo: "orden-militar",
+                nivel: 10
+            }
+        ];
+
+        // Eventos puntuales (hitos)
+        const eventos = [
+            // Eventos específicos de Jerusalén
+            //{ año: 70, nombre: "Destrucción del Templo", descripcion: "Los romanos destruyen el Segundo Templo de Jerusalén", tipo: "jerusalem-cristiano" },
+            //{ año: 132, nombre: "La rebelión de Bar Kojba.", descripcion: "El proyecto de reconstrucción de la ciudad por Adriano provocó la rebelión de Bar Kojba.", tipo: "jerusalem-romana" },
+            { año: 330, nombre: "Iglesia del Santo Sepulcro", descripcion: "Constantino encarga la construcción de la Iglesia del Santo Sepulcro en Jerusalén (324-335 d.C.)", tipo: "jerusalem-cristiano" },
+            { año: 476, nombre: "Caída del Imperio Romano de Occidente", descripcion: "El Imperio Romano de Occidente cae ante las invasiones bárbaras", tipo: "jerusalem-romana" },
+            { año: 614, nombre: "Pérdida de Jerusalén", descripcion: "El Imperio sasánida conquista la ciudad tras un asedio de 21 días", tipo: "jerusalem-romana" },
+            { año: 629, nombre: "Conquista de Jerusalén", descripcion: "Las tropas bizantinas de Heraclio recuperan Jerusalén", tipo: "jerusalem-cristiano" },
+            //{ año: 722, nombre: "Finaliza la Conquista omeya de Hispania", descripcion: "conquista musulmana de Hispania", tipo: "jerusalem-musulman" },
+            //{ año: 1244, nombre: "Pérdida Final de Jerusalén", descripcion: "Los musulmanes reconquistan definitivamente Jerusalén de los cruzados", tipo: "jerusalem-musulman" },
+
+            // Cruzadas
+            { año: 1095, nombre: "Primera Cruzada", descripcion: "El Papa Urbano II proclama la Primera Cruzada en el Concilio de Clermont", tipo: "cruzada" },
+            { año: 1147, nombre: "Segunda Cruzada", descripcion: "Liderada por Luis VII de Francia y Conrado III del Sacro Imperio", tipo: "cruzada" },
+            { año: 1189, nombre: "Tercera Cruzada", descripcion: "La 'Cruzada de los Reyes': Ricardo Corazón de León, Felipe Augusto y Federico Barbarroja", tipo: "cruzada" },
+            { año: 1202, nombre: "Cuarta Cruzada", descripcion: "Los cruzados saquean Constantinopla en lugar de ir a Tierra Santa", tipo: "cruzada" },
+            { año: 1217, nombre: "Quinta Cruzada", descripcion: "Los cruzados se enfrentan a los musulmanes en Siria y Egipto", tipo: "cruzada" },
+            { año: 1228, nombre: "Sexta Cruzada", descripcion: "Federico II recupera Jerusalén mediante negociación, no por guerra", tipo: "cruzada" },
+            { año: 1248, nombre: "Séptima Cruzada", descripcion: "La campaña de Luis IX de Francia para recuperar Jerusalén, que terminó en fracaso y pérdida de vidas.", tipo: "cruzada" },
+            { año: 1270, nombre: "Octava Cruzada", descripcion: "La última de las cruzadas medievales, organizada por el rey Luis IX de Francia para recuperar Tierra Santa", tipo: "cruzada" },
+            // Peste Negra
+            { año: 1291, nombre: "Caída de Acre", descripcion: "Caída de la última plaza fuerte cruzada en Tierra Santa", tipo: "cruzada" },
+            { año: 1347, nombre: "Llegada de la Peste Negra", descripcion: "La Peste Negra llega a Europa desde Asia a través de las rutas comerciales", tipo: "peste" },
+            // { año: 1348, nombre: "Expansión de la Peste", descripcion: "La peste se extiende por toda Europa occidental, causando devastación masiva", tipo: "peste" },
+            // { año: 1351, nombre: "Fin de la Primera Oleada", descripcion: "Termina la primera gran oleada de la Peste Negra, habiendo matado a un tercio de la población europea", tipo: "peste" }
+            //{ año: 1492, nombre: "Caída del reino nazarí de Granada", descripcion: "Los musulmanes son expulsados de España despues de 780 años de presencia", tipo: "jerusalem-cristiano" },
+            { año: 1453, nombre: "Caída de Constantinopla", descripcion: "Los otomanos conquistan Constantinopla, marcando el fin del Imperio Bizantino", tipo: "jerusalem-musulman" }
+        ];
+
+        class LineaTiempo {
+            constructor() {
+                this.container = document.getElementById('timeline');
+                this.tooltip = document.getElementById('tooltip');
+                this.añoInicio = 0;
+                this.añoFin = 1500;
+                this.anchoMaximo = 1500;
+                this.init();
+            }
+
+            init() {
+                this.crearMarcadoresAño();
+                this.crearPeriodos();
+                this.crearOverlayTemple();
+                this.crearEventos();
+                this.configurarTooltips();
+            }
+
+            calcularPosicion(año) {
+                const proporcion = (año - this.añoInicio) / (this.añoFin - this.añoInicio);
+                return proporcion * this.anchoMaximo;
+            }
+
+            crearMarcadoresAño() {
+                const intervalos = [0, 250, 500, 750, 1000, 1250, 1500];
+
+                intervalos.forEach((año, index) => {
+                    const posicion = this.calcularPosicion(año);
+
+                    // Línea vertical
+                    const linea = document.createElement('div');
+                    linea.className = 'year-line';
+                    linea.style.left = posicion + 'px';
+                    this.container.appendChild(linea);
+
+                    // Etiqueta del año
+                    const etiqueta = document.createElement('div');
+                    let claseMarker = 'year-marker';
+                    if (index === 0) {
+                        claseMarker += ' first';
+                    } else if (index === intervalos.length - 1) {
+                        claseMarker += ' last';
+                    }
+                    etiqueta.className = claseMarker;
+                    etiqueta.style.left = posicion + 'px';
+                    etiqueta.textContent = año + ' d.C.';
+                    this.container.appendChild(etiqueta);
+                });
+
+                // Eje principal
+                const eje = document.createElement('div');
+                eje.className = 'timeline-axis';
+                this.container.appendChild(eje);
+            }
+
+            crearPeriodos() {
+                periodos.forEach((periodo, index) => {
+                    const posicionInicio = this.calcularPosicion(periodo.añoInicio);
+                    const posicionFin = this.calcularPosicion(periodo.añoFin);
+                    const ancho = posicionFin - posicionInicio;
+
+                    // Contenedor del período
+                    const periodoEl = document.createElement('div');
+                    periodoEl.className = 'period';
+                    periodoEl.style.left = posicionInicio + 'px';
+                    periodoEl.style.width = ancho + 'px';
+
+                    // Altura basada en el nivel para evitar superposición
+                    const altura = 250 + (periodo.nivel * 50);
+                    periodoEl.style.bottom = altura + 'px';
+
+                    // Barra del período
+                    const barra = document.createElement('div');
+                    barra.className = `period-bar ${periodo.tipo}`;
+
+                    // Texto dentro de la barra
+                    const texto = document.createElement('div');
+                    texto.className = 'period-text';
+                    texto.textContent = periodo.nombre;
+
+                    // Etiqueta del período (tooltip)
+                    const etiqueta = document.createElement('div');
+                    etiqueta.className = 'period-label';
+                    etiqueta.textContent = `${periodo.añoInicio}-${periodo.añoFin}: ${periodo.nombre}`;
+
+                    // Datos para tooltip
+                    periodoEl.dataset.nombre = periodo.nombre;
+                    periodoEl.dataset.añoInicio = periodo.añoInicio;
+                    periodoEl.dataset.añoFin = periodo.añoFin;
+                    periodoEl.dataset.descripcion = periodo.descripcion;
+                    periodoEl.dataset.tipo = 'periodo';
+
+                    barra.appendChild(texto);
+                    periodoEl.appendChild(barra);
+                    periodoEl.appendChild(etiqueta);
+                    this.container.appendChild(periodoEl);
+                });
+            }
+
+            crearOverlayTemple() {
+                // Datos del período "Orden del Temple"
+                const añoInicio = 1119;
+                const añoFin = 1312;
+
+                const posicionInicio = this.calcularPosicion(añoInicio);
+                const posicionFin = this.calcularPosicion(añoFin);
+                const ancho = posicionFin - posicionInicio;
+
+                // Crear el div translúcido
+                const overlay = document.createElement('div');
+                overlay.className = 'overlay-temple';
+                overlay.style.left = posicionInicio + 'px';
+                overlay.style.width = ancho + 'px';
+
+                this.container.appendChild(overlay);
+            }
+
+            crearEventos() {
+                eventos.forEach((evento, index) => {
+                    const posicion = this.calcularPosicion(evento.año);
+
+                    // Contenedor del evento
+                    const eventoEl = document.createElement('div');
+                    eventoEl.className = 'event';
+                    eventoEl.style.left = posicion + 'px';
+
+                    // Altura aleatoria para evitar superposición
+                    const altura = 0 + (index % 7) * 30;
+                    eventoEl.style.bottom = '60px';
+
+                    // Línea conectora
+                    const linea = document.createElement('div');
+                    linea.className = 'event-line';
+                    linea.style.height = (430) + 'px';
+                    linea.style.bottom = '2px';
+
+                    // Marcador del evento
+                    const marcador = document.createElement('div');
+                    marcador.className = `event-marker ${evento.tipo}`;
+                    marcador.style.bottom = altura + 'px';
+
+                    // Título permanente del evento
+                    const titulo = document.createElement('div');
+                    titulo.className = 'event-title';
+                    titulo.style.bottom = (altura + 20) + 'px';
+                    titulo.textContent = evento.nombre;
+
+                    // Etiqueta del evento (hover)
+                    const etiqueta = document.createElement('div');
+                    etiqueta.className = 'event-label';
+                    etiqueta.style.bottom = (altura + 40) + 'px';
+                    etiqueta.textContent = `${evento.año}: ${evento.nombre}`;
+
+                    // Datos para tooltip
+                    eventoEl.dataset.año = evento.año;
+                    eventoEl.dataset.nombre = evento.nombre;
+                    eventoEl.dataset.descripcion = evento.descripcion;
+                    eventoEl.dataset.tipo = 'evento';
+
+                    eventoEl.appendChild(linea);
+                    eventoEl.appendChild(marcador);
+                    eventoEl.appendChild(titulo);
+                    eventoEl.appendChild(etiqueta);
+                    this.container.appendChild(eventoEl);
+                });
+            }
+
+            configurarTooltips() {
+                const elementos = this.container.querySelectorAll('.event, .period');
+
+                elementos.forEach(elemento => {
+                    elemento.addEventListener('mouseenter', (e) => {
+                        const el = e.target.closest('.event, .period');
+                        const tipo = el.dataset.tipo;
+
+                        let contenido = '';
+                        if (tipo === 'periodo') {
+                            const nombre = el.dataset.nombre;
+                            const añoInicio = el.dataset.añoInicio;
+                            const añoFin = el.dataset.añoFin;
+                            const descripcion = el.dataset.descripcion;
+
+                            contenido = `
+                                <strong>${añoInicio}-${añoFin} d.C. - ${nombre}</strong><br>
+                                ${descripcion}
+                            `;
+                        } else {
+                            const año = el.dataset.año;
+                            const nombre = el.dataset.nombre;
+                            const descripcion = el.dataset.descripcion;
+
+                            contenido = `
+                                <strong>${año} d.C. - ${nombre}</strong><br>
+                                ${descripcion}
+                            `;
+                        }
+
+                        this.tooltip.innerHTML = contenido;
+                        this.tooltip.classList.add('show');
+                    });
+
+                    elemento.addEventListener('mouseleave', () => {
+                        this.tooltip.classList.remove('show');
+                    });
+
+                    elemento.addEventListener('mousemove', (e) => {
+                        this.tooltip.style.left = (e.clientX + 10) + 'px';
+                        this.tooltip.style.top = (e.clientY - 10) + 'px';
+                    });
+                });
+            }
+        }
+
+        // Inicializar la línea de tiempo cuando se carga la página
+        document.addEventListener('DOMContentLoaded', () => {
+            new LineaTiempo();
+        });
+
+        // Redimensionar la línea de tiempo cuando cambia el tamaño de la ventana
+        window.addEventListener('resize', () => {
+            // Limpiar y recrear la línea de tiempo
+            document.getElementById('timeline').innerHTML = '';
+            new LineaTiempo();
+        });
+    </script>
+</body>
+
+</html>
