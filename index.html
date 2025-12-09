@@ -382,12 +382,6 @@
     <div class="container">
         <h1>Línea de Tiempo <br> (<span class="inicio">0</span> - <span class="fin">2025</span> d.C.)</h1>
 
-        <div style="text-align: center; margin-bottom: 20px;">
-            Ajusta el rango de años:
-            <input type="number" id="anoinicio" placeholder="Año de inicio" value="0">
-            <input type="number" id="anofin" placeholder="Año de fin" value="2025">
-        </div>
-
         <div class="timeline-container" id="timeline">
             <!-- Los eventos se generarán aquí con JavaScript -->
         </div>
@@ -726,7 +720,7 @@
                 this.container = document.getElementById('timeline');
                 this.tooltip = document.getElementById('tooltip');
                 this.añoInicio = 0;
-                this.añoFin = 2025;
+                this.añoFin = 1500;
                 this.anchoMaximo = 2025;
                 this.init();
             }
