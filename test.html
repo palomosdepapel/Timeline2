@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="mco-b2-hero-block-content-section">
+
+        <h1>Medicamentos falsificados: parecen baratos,pero salen caros</h1>
+
+        <div class="mco-b2-hero-block-description">
+            <p>Los medicamentos falsificados pueden perjudicar la salud de quien los consume. Y tú, ¿Dónde compras tus
+                medicamentos?</p>
+            <p><strong>¿Podrías detectar un medicamento falsificado?<br>
+                    Descúbrelo con este test&nbsp;</strong></p>
+        </div>
+
+        <a class="btn" href="#" title="Ponte a prueba" target="_self">Ponte a prueba</a>
+    </div>
+
+    <div class="testimonial-slider  tns-slider tns-carousel tns-subpixel tns-calc tns-horizontal">
+        <div class="testimonial-slider-item tns-item" id="tns1-item0">
+            <h2>...</h2>
+            <div class="testimonial-cta">
+                <a href="#" class="btn" title="Detecta medicamentos falsos" target="_self">Detecta medicamentos
+                    falsos</a>
+                <a href="#" class="btn secondary" title="Claves para protegerte" target="_self">Claves para
+                    protegerte</a>
+            </div>
+        </div>
+        <div class="testimonial-slider-item tns-item" id="tns1-item1">
+            <h2>¿puedes detectar un medicamento falsificado?</h2>
+            <div class="testimonial-cta">
+                <a href="#" class="btn" title="¡Haz la prueba!" target="_self">¡Haz la prueba!</a>
+            </div>
+        </div>
+        <div class="testimonial-slider-item tns-item" id="tns1-item2">
+            <h2>Contacta al DPOC en México</h2>
+            <div class="testimonial-cta">
+                <a href="mailto:aquimsd.mexico@msd.com" class="btn secondary" title="aquimsd.mexico@msd.com"
+                    target="_self" role="button" aria-haspopup="true">aquimsd.mexico@msd.com</a>
+                <a href="tel:5554819655" class="btn secondary" title="Tel: 55 5481 9655" target="_self" role="button"
+                    aria-haspopup="true">Tel: 55 5481 9655</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Crear el nuevo botón en B2: Hero Block
+            const nuevoBoton = document.createElement('a');
+            nuevoBoton.className = 'btn tertiary';
+            nuevoBoton.href = '#contacto';
+            nuevoBoton.title = 'Reportar un medicamento';
+            nuevoBoton.target = '_self';
+            nuevoBoton.textContent = 'Reportar un medicamento';
+
+            // Encontrar el botón existente dentro de mco-b2-hero-block-content-section y agregar el nuevo después
+            const botonExistente = document.querySelector('.mco-b2-hero-block-content-section .btn');
+            if (botonExistente) {
+                botonExistente.parentNode.insertBefore(nuevoBoton, botonExistente.nextSibling);
+            }
+
+            // Crear el nuevo párrafo para #tns1-item1
+            const nuevoParagrafo = document.createElement('p');
+            nuevoParagrafo.textContent = 'Pon a prueba tu ojo experto:';
+
+            // Encontrar el h2 dentro de #tns1-item1 y agregar el párrafo antes
+            const h2Element = document.querySelector('#tns1-item1 h2');
+            if (h2Element) {
+                h2Element.parentNode.insertBefore(nuevoParagrafo, h2Element);
+            }
+
+            // Crear el nuevo párrafo para #tns1-item2
+            const nuevoParagrafo2 = document.createElement('p');
+            nuevoParagrafo2.textContent = '¿Quieres reportar un medicamento sospechoso?';
+
+            // Encontrar el h2 dentro de #tns1-item2 y agregar el párrafo antes
+            const h2Element2 = document.querySelector('#tns1-item2 h2');
+            if (h2Element2) {
+                h2Element2.parentNode.insertBefore(nuevoParagrafo2, h2Element2);
+            }
+
+            // Cambiar la clase del botón en #tns1-item0
+            const botonDetecta = document.querySelector('#tns1-item0 .btn[title="Detecta medicamentos falsos"]');
+            if (botonDetecta) {
+                botonDetecta.className = 'btn secondary';
+            }
+
+            // Cambiar las clases de los botones en #tns1-item2 a "btn quaternary"
+            const botonesItem2 = document.querySelectorAll('#tns1-item2 .btn');
+            botonesItem2.forEach(function (boton) {
+                boton.className = 'btn secondary';
+            });
+
+            // Agregar imagen a todos los botones dentro de #tns1-item0
+            const botonesItem0 = document.querySelectorAll('#tns1-item0 .btn');
+            botonesItem0.forEach(function (boton) {
+                const imagen = document.createElement('img');
+                imagen.src = 'https://www.corporativo.msd.com.mx/wp-content/uploads/sites/51/2025/12/download_1e718a.png';
+                imagen.alt = 'Icono';
+                imagen.style.marginRight = '8px';
+                imagen.style.verticalAlign = 'middle';
+
+                // Insertar la imagen al inicio del botón
+                boton.insertBefore(imagen, boton.firstChild);
+            });
+
+            // Agregar imágenes específicas a los botones de #tns1-item2
+            const botonesItem2Especificos = document.querySelectorAll('#tns1-item2 .btn');
+            if (botonesItem2Especificos.length >= 2) {
+                // Primer botón (email) - agregar icono de mail
+                const imagenMail = document.createElement('img');
+                imagenMail.src = 'https://www.corporativo.msd.com.mx/wp-content/uploads/sites/51/2025/12/mail.png';
+                imagenMail.alt = 'Mail';
+                imagenMail.style.marginRight = '8px';
+                imagenMail.style.verticalAlign = 'middle';
+                botonesItem2Especificos[0].insertBefore(imagenMail, botonesItem2Especificos[0].firstChild);
+
+                // Segundo botón (teléfono) - agregar icono de call
+                const imagenCall = document.createElement('img');
+                imagenCall.src = 'https://www.corporativo.msd.com.mx/wp-content/uploads/sites/51/2025/12/call.png';
+                imagenCall.alt = 'Call';
+                imagenCall.style.marginRight = '8px';
+                imagenCall.style.verticalAlign = 'middle';
+                botonesItem2Especificos[1].insertBefore(imagenCall, botonesItem2Especificos[1].firstChild);
+            }
+        });
+    </script>
+
+</body>
+
+</html>
